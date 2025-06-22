@@ -1,0 +1,7 @@
+{
+  "vendors": [
+    {"name": "AWS", "forecast_file": "input/aws_forecast.csv"},
+    {"name": "Azure", "forecast_file": "input/azure_forecast.csv"},
+    {"name": "Databricks", "forecast_file": "input/databricks_forecast.csv"}
+  ]
+}

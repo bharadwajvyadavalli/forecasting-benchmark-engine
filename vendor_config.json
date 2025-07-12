@@ -1,7 +1,41 @@
 {
   "vendors": [
-    {"name": "AWS", "forecast_file": "input/aws_forecast.csv"},
-    {"name": "Azure", "forecast_file": "input/azure_forecast.csv"},
-    {"name": "Databricks", "forecast_file": "input/databricks_forecast.csv"}
-  ]
+    {
+      "name": "AWS",
+      "forecast_files": {
+        "dataset1": "input/aws_dataset1_forecast.csv",
+        "dataset2": "input/aws_dataset2_forecast.csv",
+        "dataset3": "input/aws_dataset3_forecast.csv",
+        "dataset4": "input/aws_dataset4_forecast.csv",
+        "dataset5": "input/aws_dataset5_forecast.csv"
+      }
+    },
+    {
+      "name": "Azure",
+      "forecast_files": {
+        "dataset1": "input/azure_dataset1_forecast.csv",
+        "dataset2": "input/azure_dataset2_forecast.csv",
+        "dataset3": "input/azure_dataset3_forecast.csv",
+        "dataset4": "input/azure_dataset4_forecast.csv",
+        "dataset5": "input/azure_dataset5_forecast.csv"
+      }
+    },
+    {
+      "name": "Databricks",
+      "forecast_files": {
+        "dataset1": "input/databricks_dataset1_forecast.csv",
+        "dataset2": "input/databricks_dataset2_forecast.csv",
+        "dataset3": "input/databricks_dataset3_forecast.csv",
+        "dataset4": "input/databricks_dataset4_forecast.csv",
+        "dataset5": "input/databricks_dataset5_forecast.csv"
+      }
+    }
+  ],
+  "datasets": {
+    "dataset1": "Low Volatility Sales",
+    "dataset2": "High Volatility Demand",
+    "dataset3": "Seasonal Product Sales",
+    "dataset4": "Trending Revenue",
+    "dataset5": "Intermittent Spare Parts"
+  }
 }

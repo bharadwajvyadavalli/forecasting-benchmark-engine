@@ -30,12 +30,5 @@
         "dataset5": "input/databricks_dataset5_forecast.csv"
       }
     }
-  ],
-  "datasets": {
-    "dataset1": "Low Volatility Sales",
-    "dataset2": "High Volatility Demand",
-    "dataset3": "Seasonal Product Sales",
-    "dataset4": "Trending Revenue",
-    "dataset5": "Intermittent Spare Parts"
-  }
+  ]
 }

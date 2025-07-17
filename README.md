@@ -1,67 +1,39 @@
-# Forecast Benchmarking Engine
+# Forecasting Benchmark
 
-A simple tool to benchmark forecast accuracy from multiple vendors (AWS, Azure, Databricks) across different datasets.
+Simple tool to benchmark forecast accuracy across vendors using advanced metrics.
 
 ## Quick Start
 
-1. Install dependencies:
 ```bash
-pip install pandas numpy matplotlib seaborn
+# Install dependencies
+pip install pandas numpy matplotlib seaborn scipy scikit-learn statsmodels prophet
 
-Run the benchmark:
+# Run everything
+python run_all.py
+```
 
-bashpython run_benchmark.py
+## Files
 
-View results:
+- **forecast_generator.py** - Generates forecasts (ARIMA, Holt-Winters, Prophet)
+- **metrics_calculator.py** - Calculates metrics (Bias, CRPS, Anomaly%, Drift, TP-F1)
+- **visualization_generator.py** - Creates detailed charts and metrics table
+- **dashboard_creator.py** - Generates HTML dashboard
+- **run_all.py** - Runs everything
 
+## Output
 
-Open output/dashboard.html in your browser
+- **output/dashboard.html** - Open this in your browser
+- **output/metrics_comparison.png** - Average metrics by vendor
+- **output/dataset_details.png** - All metrics breakdown by dataset
+- **output/metrics_table.png** - Detailed statistics (min/max/avg/std) for all metrics
+- **output/metrics_heatmap.png** - Heatmap showing all metrics across all datasets
 
-Project Structure
-├── vendor_config.json      # Configuration file
-├── generate_sample_data.py # Generate test data
-├── benchmark_engine.py     # Main analysis engine
-├── create_visualizations.py # Generate charts
-├── create_dashboard.py     # Generate HTML dashboard
-├── run_benchmark.py        # Main runner script
-├── input/                  # Forecast CSV files
-│   └── [vendor]_[dataset]_forecast.csv
-└── output/                 # Results
-    ├── benchmark_results.json
-    ├── dashboard.html
-    └── *.png (charts)
-Input Format
-Each forecast CSV file should have:
+## Metrics
 
-Date: Date column
-Actual: Actual values
-Forecast: Forecasted values
-
-Metrics Calculated
-
-MAE: Mean Absolute Error
-MAPE: Mean Absolute Percentage Error
-WAPE: Weighted Absolute Percentage Error
-RMSE: Root Mean Square Error
-Bias: Average forecast bias
-
-Adding New Vendors/Datasets
-Edit vendor_config.json to add new vendors or datasets, then place the corresponding CSV files in the input/ folder.
-
----
-
-## Summary
-
-This simplified benchmarking engine:
-
-1. **Loads forecast files** from AWS, Azure, and Databricks (already containing Actual vs Forecast)
-2. **Calculates metrics** (MAE, MAPE, WAPE, RMSE, Bias)
-3. **Creates visualizations** (comparison charts, heatmaps)
-4. **Generates a dashboard** showing best performers
-
-To use:
-1. Copy all 7 files to PyCharm
-2. Run `python run_benchmark.py`
-3. Open `output/dashboard.html`
-
-The system expects CSV files with Date, Actual, and Forecast columns. It will automatically generate sample data if none exists.
+| Metric | Measures | Better |
+|--------|----------|--------|
+| Bias | Average error | Near 0 |
+| CRPS | Probabilistic accuracy | Lower |
+| Anomaly% | Outliers | Lower |
+| Drift | Distribution change | Lower |
+| TP-F1 | Trend detection | Higher |

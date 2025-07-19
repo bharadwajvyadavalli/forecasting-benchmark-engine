@@ -74,7 +74,6 @@ def main():
             <img src="metrics_comparison.png" alt="Metrics">
             <img src="dataset_details.png" alt="Dataset Details">
             <img src="metrics_table.png" alt="Metrics Summary">
-            <img src="metrics_heatmap.png" alt="Metrics Heatmap">
         </div>
     </div>
 </body>

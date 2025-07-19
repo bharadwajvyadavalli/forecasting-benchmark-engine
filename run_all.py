@@ -17,14 +17,21 @@ def main():
     if not os.path.exists('vendor_config.json'):
         with open('vendor_config.json', 'w') as f:
             f.write('''{
+  "datasets": [
+    "monthly_car_sales",
+    "us_auto_inventory", 
+    "sunspots",
+    "shampoo_sales",
+    "air_passengers"
+  ],
   "vendors": [
-    {"name": "AWS", "forecast_files": {"dataset1": "input/aws_dataset1_forecast.csv", "dataset2": "input/aws_dataset2_forecast.csv", "dataset3": "input/aws_dataset3_forecast.csv", "dataset4": "input/aws_dataset4_forecast.csv", "dataset5": "input/aws_dataset5_forecast.csv"}},
-    {"name": "Azure", "forecast_files": {"dataset1": "input/azure_dataset1_forecast.csv", "dataset2": "input/azure_dataset2_forecast.csv", "dataset3": "input/azure_dataset3_forecast.csv", "dataset4": "input/azure_dataset4_forecast.csv", "dataset5": "input/azure_dataset5_forecast.csv"}},
-    {"name": "Databricks", "forecast_files": {"dataset1": "input/databricks_dataset1_forecast.csv", "dataset2": "input/databricks_dataset2_forecast.csv", "dataset3": "input/databricks_dataset3_forecast.csv", "dataset4": "input/databricks_dataset4_forecast.csv", "dataset5": "input/databricks_dataset5_forecast.csv"}}
+    {"name": "AWS", "forecast_files": {"monthly_car_sales": "input/aws_monthly_car_sales_forecast.csv", "us_auto_inventory": "input/aws_us_auto_inventory_forecast.csv", "sunspots": "input/aws_sunspots_forecast.csv", "shampoo_sales": "input/aws_shampoo_sales_forecast.csv", "air_passengers": "input/aws_air_passengers_forecast.csv"}},
+    {"name": "Azure", "forecast_files": {"monthly_car_sales": "input/azure_monthly_car_sales_forecast.csv", "us_auto_inventory": "input/azure_us_auto_inventory_forecast.csv", "sunspots": "input/azure_sunspots_forecast.csv", "shampoo_sales": "input/azure_shampoo_sales_forecast.csv", "air_passengers": "input/azure_air_passengers_forecast.csv"}},
+    {"name": "Databricks", "forecast_files": {"monthly_car_sales": "input/databricks_monthly_car_sales_forecast.csv", "us_auto_inventory": "input/databricks_us_auto_inventory_forecast.csv", "sunspots": "input/databricks_sunspots_forecast.csv", "shampoo_sales": "input/databricks_shampoo_sales_forecast.csv", "air_passengers": "input/databricks_air_passengers_forecast.csv"}}
   ]
 }''')
 
-    scripts = ["forecast_generator.py", "metrics_calculator.py", "visualization_generator.py", "dashboard_creator.py"]
+    scripts = ["data_generator.py", "forecast_generator.py", "metrics_calculator.py", "visualization_generator.py", "dashboard_creator.py"]
 
     for script in scripts:
         print(f"\nRunning {script}...")

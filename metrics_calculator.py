@@ -1,41 +1,67 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 import json
 import os
 from scipy import stats
+from scipy.stats import ks_2samp
 from sklearn.metrics import f1_score
+from statsmodels import robust
 
-def calculate_metrics(actual, forecast):
+def generate_forecast_samples(actual, forecast, n_samples=1000):
+    residuals = actual - forecast
+    mad = robust.mad(residuals)
+    std_estimate = mad * 1.4826  # MAD to std approximation
+    forecast_samples = np.random.normal(loc=forecast[:, None], scale=std_estimate, size=(len(forecast), n_samples))
+    return forecast_samples
+
+def crps_manual(y, forecast_samples):
+    forecast_samples = np.sort(forecast_samples)
+    n = len(forecast_samples)
+    empirical_cdf = np.searchsorted(forecast_samples, y, side='right') / n
+    crps = np.mean((forecast_samples - y) ** 2) - np.mean((forecast_samples[:, None] - forecast_samples) ** 2) / 2
+    return crps
+
+def calculate_crps_all(actual, forecast_samples):
+    crps_values = [crps_manual(y, fs) for y, fs in zip(actual, forecast_samples)]
+    return np.mean(crps_values)
+
+def calculate_metrics(actual, forecast, n_samples=1000):
+    actual = np.array(actual)
+    forecast = np.array(forecast)
+
     residuals = actual - forecast
 
     # Bias
     bias = np.mean(forecast - actual)
 
-    # CRPS (simplified)
-    crps = np.mean(np.abs(residuals)) + 0.5 * np.std(residuals)
+    # Forecast Samples
+    forecast_samples = generate_forecast_samples(actual, forecast, n_samples)
 
-    # Residual Anomaly %
-    anomaly_pct = (np.abs(stats.zscore(residuals)) > 3).sum() / len(residuals) * 100
+    # Bias-Adjusted Spread CRPS
+    forecast_centered = forecast - bias
+    forecast_samples_centered = forecast_samples - bias
+    spread_crps = calculate_crps_all(actual, forecast_samples_centered)
 
-    # Data Drift
+    # Residual Anomaly % (Z-score)
+    z_scores = stats.zscore(residuals)
+    anomaly_pct = (np.abs(z_scores) > 3).sum() / len(residuals) * 100
+
+    # Data Drift (KS Test)
     mid = len(actual) // 2
-    if mid > 0:
-        drift = abs(np.mean(actual[:mid]) - np.mean(actual[mid:])) / (np.std(actual) + 1e-10)
-    else:
-        drift = 0.0
+    drift = ks_2samp(actual[:mid], actual[mid:])[0] if mid > 0 else 0.0
 
-    # Turning Point F1
+    # Turning Point F1 Score
     try:
-        actual_turns = np.diff(np.sign(np.diff(actual))) != 0
-        forecast_turns = np.diff(np.sign(np.diff(forecast))) != 0
-        tp_f1 = f1_score(actual_turns[:min(len(actual_turns), len(forecast_turns))],
-                        forecast_turns[:min(len(actual_turns), len(forecast_turns))])
+        actual_turns = (np.diff(np.sign(np.diff(actual))) != 0).astype(int)
+        forecast_turns = (np.diff(np.sign(np.diff(forecast))) != 0).astype(int)
+        min_len = min(len(actual_turns), len(forecast_turns))
+        tp_f1 = f1_score(actual_turns[:min_len], forecast_turns[:min_len])
     except:
         tp_f1 = 0.0
 
     return {
         'Bias': round(bias, 2),
-        'CRPS': round(crps, 2),
+        'CRPS': round(spread_crps, 4),
         'Residual_Anomaly_%': round(anomaly_pct, 2),
         'Data_Drift': round(drift, 4),
         'Turning_Point_F1': round(tp_f1, 4)
@@ -49,7 +75,7 @@ def main():
 
     for vendor in config['vendors']:
         name = vendor['name']
-        files = vendor.get('forecast_files', {'single': vendor.get('forecast_file')})
+        files = vendor.get('forecast_files', {})
 
         vendor_metrics = {}
         for dataset, path in files.items():
@@ -57,7 +83,8 @@ def main():
                 df = pd.read_csv(path)
                 if 'Actual' in df and 'Forecast' in df:
                     vendor_metrics[dataset] = calculate_metrics(df['Actual'].values, df['Forecast'].values)
-            except:
+            except Exception as e:
+                print(f"Error processing {dataset} for {name}: {e}")
                 pass
 
         if vendor_metrics:
